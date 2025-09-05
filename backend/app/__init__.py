@@ -15,8 +15,15 @@ def create_app():
     db.init_app(app)
     CORS(app)
 
+    # Import models to ensure they're registered
+    from . import models
+    
     # Import and register routes
     from .routes import main
     app.register_blueprint(main)
+    
+    # Create tables
+    with app.app_context():
+        db.create_all()
 
     return app
