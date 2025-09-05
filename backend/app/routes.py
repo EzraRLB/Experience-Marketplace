@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify
-from .models import Experience
+from .models import Experience, User, City, ExperienceImage
+from . import db
 
 main = Blueprint("main", __name__)
 
