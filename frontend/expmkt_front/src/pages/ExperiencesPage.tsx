@@ -1,14 +1,7 @@
 import { useEffect, useState } from "react";
 import ExperienceCard from "../components/ExperienceCard";
-
-type Experience = {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-  location: string;
-  image?: string;
-};
+import type { Experience } from '../types/experience';
+// filepath: ExperiencesPage.tsx
 
 export default function ExperiencesPage() {
   const [experiences, setExperiences] = useState<Experience[]>([]);
@@ -40,7 +33,7 @@ export default function ExperiencesPage() {
   return (
     <div className="bg-gray-50 min-h-screen py-10">
       <div className="max-w-7xl mx-auto px-6">
-        <h1 className="text-4xl font-bold mb-8 text-gray-900">Available Experiences</h1>
+        <h1 className="text-4xl font-bold mb-8 text-gray-900 text-center">Available Experiences</h1>
         {experiences.length === 0 ? (
           <p className="text-gray-500 text-lg">No experiences available.</p>
         ) : (

@@ -1,36 +1,21 @@
-type Experience = {
-  id: number;
-  title: string;
-  short_description: string;
-  long_description: string;
-  price: number;
-  duration?: string;
-  created_at?: string;
-  city?: {
-    id: number;
-    name: string;
-    country: string;
-    state?: string;
-  };
-  host?: {
-    id: number;
-    name: string;
-    email: string;
-    role: string;
-  };
-  images: Array<{
-    id: number;
-    url: string;
-  }>;
-};
+import { useState } from 'react';
+import type { Experience } from '../types/experience';
+import ExperienceModal from './ExperienceModal';
+// filepath: ExperienceCard.tsx
 
 interface ExperienceCardProps {
   experience: Experience;
 }
 
 export default function ExperienceCard({ experience }: ExperienceCardProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
-    <div className="bg-white shadow-lg rounded-2xl overflow-hidden hover:shadow-2xl transition duration-300 ease-in-out cursor-pointer">
+    <>
+      <div 
+        className="bg-white shadow-lg rounded-2xl overflow-hidden hover:shadow-2xl transition duration-300 ease-in-out cursor-pointer"
+        onClick={() => setIsModalOpen(true)}
+      >
       {experience.images.length > 0 && (
         <img
           src={experience.images[0].url}
@@ -53,5 +38,12 @@ export default function ExperienceCard({ experience }: ExperienceCardProps) {
         </div>
       </div>
     </div>
+    
+    <ExperienceModal 
+      experience={experience}
+      isOpen={isModalOpen}
+      onClose={() => setIsModalOpen(false)}
+    />
+    </>
   );
 }
