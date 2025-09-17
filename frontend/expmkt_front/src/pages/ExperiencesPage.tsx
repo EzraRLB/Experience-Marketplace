@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ExperienceCard from "../components/ExperienceCard";
+import AddExperienceModal from "../components/AddExperienceModal";
 import type { Experience } from '../types/experience';
 // filepath: ExperiencesPage.tsx
 
@@ -7,8 +8,9 @@ export default function ExperiencesPage() {
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  useEffect(() => {
+  const fetchExperiences = () => {
     fetch("http://127.0.0.1:5000/api/experiences")
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch experiences");
@@ -22,6 +24,10 @@ export default function ExperiencesPage() {
         setError(err.message);
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchExperiences();
   }, []);
 
   if (loading)
@@ -33,7 +39,15 @@ export default function ExperiencesPage() {
   return (
     <div className="bg-gray-50 min-h-screen py-10">
       <div className="max-w-7xl mx-auto px-6">
-        <h1 className="text-4xl font-bold mb-8 text-gray-900 text-center">Available Experiences</h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900">Available Experiences</h1>
+          <button 
+            onClick={() => setIsAddModalOpen(true)}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200"
+          >
+            Add Experience
+          </button>
+        </div>
         {experiences.length === 0 ? (
           <p className="text-gray-500 text-lg">No experiences available.</p>
         ) : (
@@ -44,6 +58,12 @@ export default function ExperiencesPage() {
           </div>
         )}
       </div>
+      
+      <AddExperienceModal 
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onExperienceAdded={fetchExperiences}
+      />
     </div>
   );
 }
