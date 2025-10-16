@@ -51,3 +51,25 @@ def create_experience():
     
     db.session.commit()
     return jsonify(experience.to_dict()), 201
+
+@main.route("/api/cities", methods=["GET"])
+def get_cities():
+    cities = db.session.query(City.name).distinct().all()
+    return jsonify([city[0] for city in cities])
+
+@main.route("/api/countries", methods=["GET"])
+def get_countries():
+    countries = db.session.query(City.country).distinct().all()
+    return jsonify([country[0] for country in countries if country[0]])
+
+@main.route("/api/states", methods=["GET"])
+def get_states():
+    states = db.session.query(City.state).distinct().all()
+    return jsonify([state[0] for state in states if state[0]])
+
+@main.route("/api/experiences/<int:experience_id>", methods=["DELETE"])
+def delete_experience(experience_id):
+    experience = Experience.query.get_or_404(experience_id)
+    db.session.delete(experience)
+    db.session.commit()
+    return '', 204

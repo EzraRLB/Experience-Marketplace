@@ -1,13 +1,32 @@
+import { useState } from 'react';
 import type { Experience } from '../types/experience';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
 // filepath: ExperiencesPage.tsx
 
 interface ExperienceModalProps {
   experience: Experience;
   isOpen: boolean;
   onClose: () => void;
+  onExperienceDeleted?: () => void;
 }
 
-export default function ExperienceModal({ experience, isOpen, onClose }: ExperienceModalProps) {
+export default function ExperienceModal({ experience, isOpen, onClose, onExperienceDeleted }: ExperienceModalProps) {
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/api/experiences/${experience.id}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        onExperienceDeleted?.();
+        onClose();
+      }
+    } catch (error) {
+      console.error('Error deleting experience:', error);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -20,6 +39,13 @@ export default function ExperienceModal({ experience, isOpen, onClose }: Experie
         onClick={(e) => e.stopPropagation()}
       >
         <div className="relative">
+          <button
+            onClick={() => setShowDeleteConfirm(true)}
+            className="absolute top-4 left-4 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-sm font-medium z-10 shadow-md"
+            title="Delete Experience"
+          >
+            Delete
+          </button>
           <button
             onClick={onClose}
             className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl z-10"
@@ -60,6 +86,14 @@ export default function ExperienceModal({ experience, isOpen, onClose }: Experie
               <div className="mb-4">
                 <h3 className="font-semibold text-gray-800 mb-2">Host</h3>
                 <p className="text-gray-600">{experience.host.name}</p>
+                {experience.host.email && (
+                  <a 
+                    href={`mailto:${experience.host.email}`}
+                    className="text-indigo-600 hover:text-indigo-800 underline text-sm"
+                  >
+                    {experience.host.email}
+                  </a>
+                )}
               </div>
             )}
             
@@ -71,6 +105,12 @@ export default function ExperienceModal({ experience, isOpen, onClose }: Experie
           </div>
         </div>
       </div>
+      
+      <DeleteConfirmationModal
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }
