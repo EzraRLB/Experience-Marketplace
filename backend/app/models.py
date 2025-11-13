@@ -6,6 +6,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(20), default="customer")
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -27,6 +28,8 @@ class City(db.Model):
     name = db.Column(db.String(100), nullable=False)
     country = db.Column(db.String(100), nullable=False)
     state = db.Column(db.String(100))
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
 
     experiences = db.relationship("Experience", backref="city", lazy=True)
 
@@ -35,7 +38,9 @@ class City(db.Model):
             "id": self.id,
             "name": self.name,
             "country": self.country,
-            "state": self.state
+            "state": self.state,
+            "latitude": self.latitude,
+            "longitude": self.longitude
         }
 
 
