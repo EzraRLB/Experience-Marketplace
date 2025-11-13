@@ -5,9 +5,10 @@ import ExperienceModal from './ExperienceModal';
 
 interface ExperienceCardProps {
   experience: Experience;
+  onExperienceDeleted?: () => void;
 }
 
-export default function ExperienceCard({ experience }: ExperienceCardProps) {
+export default function ExperienceCard({ experience, onExperienceDeleted }: ExperienceCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -43,6 +44,7 @@ export default function ExperienceCard({ experience }: ExperienceCardProps) {
       experience={experience}
       isOpen={isModalOpen}
       onClose={() => setIsModalOpen(false)}
+      onExperienceDeleted={onExperienceDeleted}
     />
     </>
   );

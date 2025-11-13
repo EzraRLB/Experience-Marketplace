@@ -53,7 +53,7 @@ export default function ExperiencesPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {experiences.map((exp) => (
-              <ExperienceCard key={exp.id} experience={exp} />
+              <ExperienceCard key={exp.id} experience={exp} onExperienceDeleted={fetchExperiences} />
             ))}
           </div>
         )}

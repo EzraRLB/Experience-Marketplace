@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from .models import Experience, User, City, ExperienceImage
-from . import db
+from . import db, bcrypt
 
 main = Blueprint("main", __name__)
 
@@ -70,6 +70,41 @@ def get_states():
 @main.route("/api/experiences/<int:experience_id>", methods=["DELETE"])
 def delete_experience(experience_id):
     experience = Experience.query.get_or_404(experience_id)
+    
+    # Delete related images first
+    ExperienceImage.query.filter_by(experience_id=experience_id).delete()
+    
+    # Then delete the experience
     db.session.delete(experience)
     db.session.commit()
     return '', 204
+
+@main.route("/api/login", methods=["POST"])
+def login():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    
+    user = User.query.filter_by(email=email).first()
+    if user and bcrypt.check_password_hash(user.password, password):
+        return jsonify({"success": True, "user": user.to_dict()}), 200
+    else:
+        return jsonify({"success": False, "message": "Invalid credentials"}), 401
+
+@main.route("/api/experience-locations", methods=["GET"])
+def get_experience_locations():
+    experiences = Experience.query.all()
+    locations = []
+    
+    for exp in experiences:
+        if exp.city and exp.city.latitude and exp.city.longitude:
+            locations.append({
+                'id': exp.id,
+                'title': exp.title,
+                'city': exp.city.name,
+                'country': exp.city.country,
+                'lat': exp.city.latitude,
+                'lng': exp.city.longitude
+            })
+    
+    return jsonify(locations)
